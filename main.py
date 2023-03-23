@@ -494,8 +494,8 @@ for p in problems:
     end = time.time()
     diff = end - start
     runTimeMRV.append(diff)
-    print(interval)
-    print(diff)
+    # print(interval)
+    # print(diff)
     #print("Is the current grid a solution?", tem[0].is_solved())
     
 plotter = PlotResults()
