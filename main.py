@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import time
+from math import inf
 class PlotResults:
     """
     Class to plot the results. 
@@ -199,18 +200,44 @@ class VarSelector:
     def select_variable(self, grid):
         pass
 
+
 class FirstAvailable(VarSelector):
     """
     Naïve method for selecting variables; simply returns the first variable encountered whose domain is larger than one.
     """
+    def __init__(self):
+        self.last_selected = None
+        
     def select_variable(self, grid):
         # Implement here the first available heuristic
         # Sequentially loop all the cells until finding an unassigned variable
-        for i in range(grid.get_width()):
-            for j in range(grid.get_width()):
+        if self.last_selected is None:
+            start_i, start_j = 0, 0
+        else:
+            start_i, start_j = self.last_selected[0], self.last_selected[1]
+
+        for i in range(start_i, grid.get_width()):
+            for j in range(start_j, grid.get_width()):
                 if len(grid.get_cells()[i][j]) > 1:
-                    return i, j
+                    self.last_selected = (i, j)
+                    return self.last_selected
+            start_j = 0
+        
+        self.last_selected = None
         return -1, -1
+
+# class FirstAvailable(VarSelector):
+#     """
+#     Naïve method for selecting variables; simply returns the first variable encountered whose domain is larger than one.
+#     """
+#     def select_variable(self, grid):
+#         # Implement here the first available heuristic
+        
+#         for i in range(grid.get_width()):
+#             for j in range(grid.get_width()):
+#                 if len(grid.get_cells()[i][j]) > 1:
+#                     return i, j
+#         return -1, -1
 
 class MRV(VarSelector):
     """
@@ -218,10 +245,10 @@ class MRV(VarSelector):
     """
     def select_variable(self, grid):
         # Implement here the mrv heuristic
-        minimum_remaining_value = float("inf")  # infinity
+        minimum_remaining_value = inf  # postitive infinity
         minimum_remaining_value_position = (-1, -1)
 
-        # Loop all the cells, find the one with minimum length
+        # find mini length
         for i in range(grid.get_width()):
             for j in range(grid.get_width()):
                 l = len(grid.get_cells()[i][j])
@@ -330,10 +357,10 @@ class AC3:
             arcs = [Q]
         else:
             arcs = Q
-        bingo = set()
+        processed = set()
         while len(arcs):
             cell = arcs.pop()
-            bingo.add(cell)
+            processed.add(cell)
             
             assignRow, failure = self.remove_domain_row(grid,cell[0], cell[1])
             if failure:
@@ -344,9 +371,7 @@ class AC3:
             assignUnit, failure = self.remove_domain_unit(grid,cell[0], cell[1])
             if failure:
                 return failure
-            arcs.extend(assignRow)
-            arcs.extend(assignCol)
-            arcs.extend(assignUnit)
+            arcs += assignRow + assignCol + assignUnit
         return False
     def pre_process_consistency(self, grid):
         """
@@ -494,8 +519,8 @@ for p in problems:
     end = time.time()
     diff = end - start
     runTimeMRV.append(diff)
-    # print(interval)
-    # print(diff)
+    print(interval)
+    print(diff)
     #print("Is the current grid a solution?", tem[0].is_solved())
     
 plotter = PlotResults()
