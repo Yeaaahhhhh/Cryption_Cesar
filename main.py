@@ -201,43 +201,43 @@ class VarSelector:
         pass
 
 
-class FirstAvailable(VarSelector):
-    """
-    Naïve method for selecting variables; simply returns the first variable encountered whose domain is larger than one.
-    """
-    def __init__(self):
-        self.last_selected = None
-        
-    def select_variable(self, grid):
-        # Implement here the first available heuristic
-        # Sequentially loop all the cells until finding an unassigned variable
-        if self.last_selected is None:
-            start_i, start_j = 0, 0
-        else:
-            start_i, start_j = self.last_selected[0], self.last_selected[1]
-
-        for i in range(start_i, grid.get_width()):
-            for j in range(start_j, grid.get_width()):
-                if len(grid.get_cells()[i][j]) > 1:
-                    self.last_selected = (i, j)
-                    return self.last_selected
-            start_j = 0
-        
-        self.last_selected = None
-        return -1, -1
-
 # class FirstAvailable(VarSelector):
 #     """
 #     Naïve method for selecting variables; simply returns the first variable encountered whose domain is larger than one.
 #     """
+#     def __init__(self):
+#         self.last_selected = None
+        
 #     def select_variable(self, grid):
 #         # Implement here the first available heuristic
-        
-#         for i in range(grid.get_width()):
-#             for j in range(grid.get_width()):
+#         # Sequentially loop all the cells until finding an unassigned variable
+#         if self.last_selected is None:
+#             start_i, start_j = 0, 0
+#         else:
+#             start_i, start_j = self.last_selected[0], self.last_selected[1]
+
+#         for i in range(start_i, grid.get_width()):
+#             for j in range(start_j, grid.get_width()):
 #                 if len(grid.get_cells()[i][j]) > 1:
-#                     return i, j
+#                     self.last_selected = (i, j)
+#                     return self.last_selected
+#             start_j = 0
+        
+#         self.last_selected = None
 #         return -1, -1
+
+class FirstAvailable(VarSelector):
+    """
+    Naïve method for selecting variables; simply returns the first variable encountered whose domain is larger than one.
+    """
+    def select_variable(self, grid):
+        # Implement here the first available heuristic
+        
+        for i in range(grid.get_width()):
+            for j in range(grid.get_width()):
+                if len(grid.get_cells()[i][j]) > 1:
+                    return i, j
+        return -1, -1
 
 class MRV(VarSelector):
     """
