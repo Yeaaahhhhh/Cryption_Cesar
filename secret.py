@@ -1,15 +1,19 @@
 import tkinter as tk
 import random
 import string
-
+charset = string.ascii_letters + string.digits + string.punctuation + ' '
 # Define an encrypt function that takes a text and a key as input and returns the encrypted text.
 def encrypt(text, key):
     encrypted_text = ""
     key_length = len(key)
+    charset_len = len(charset)
     for i, char in enumerate(text):
+        if char not in charset:
+            encrypted_text += char
+            continue
         key_char = key[i % key_length]
-        shift = ord(key_char)
-        encrypted_char = chr((ord(char) + shift) % 256)
+        shift = charset.index(key_char)
+        encrypted_char = charset[(charset.index(char) + shift) % charset_len]
         encrypted_text += encrypted_char
     return encrypted_text
 
@@ -17,10 +21,14 @@ def encrypt(text, key):
 def decrypt(text, key):
     decrypted_text = ""
     key_length = len(key)
+    charset_len = len(charset)
     for i, char in enumerate(text):
+        if char not in charset:
+            decrypted_text += char
+            continue
         key_char = key[i % key_length]
-        shift = ord(key_char)
-        decrypted_char = chr((ord(char) - shift) % 256)
+        shift = charset.index(key_char)
+        decrypted_char = charset[(charset.index(char) - shift) % charset_len]
         decrypted_text += decrypted_char
     return decrypted_text
 
